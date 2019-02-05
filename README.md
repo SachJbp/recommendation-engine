@@ -12,11 +12,14 @@ The project was divided into five distinct phases, which we will use to describe
 
 **Phase 1: Pipeline**
 
-We started with the zip files imported into S3 buckets. We then used an AWS Crawler and Glue Job script to generate the table onto Athena. For the Event JSON zip file, we created a classifier to read the zip file and edited the Glue Job script so that all the dates were in ISO UTC datetime format and normalized the data so that event descriptions did not contain new lines and unknown UTF symbols
+We started with the zip files imported into S3 buckets. We then used an AWS Crawler and Glue Job script to generate the table onto Athena. For the Event JSON zip file, we created a classifier to read the zip file and edited the Glue Job script so that all the dates were in ISO UTC datetime format and normalized the data so that event descriptions did not contain new lines and unknown UTF symbols.
 
 <p align="center"><img src="https://github.com/heatherciallella/recommendation-engine/blob/master/img/RecommendProject%20Diagram.png" width="50%"><p>
 
 **Phase 2: Display**
+With the cleaned event data already in Athena from Phase 1, we used Lambda functions to send the data to DynamoDB. The web page sends requests via API Gateway to Lambda which has a function to query an event. The event takes the reverse path to display the data on a webpage.
+
+<p align="center"><img src="https://github.com/heatherciallella/recommendation-engine/blob/master/img/phase2.png" width="50%"><p>
 
 **Phase 3: Enrichment**
 
