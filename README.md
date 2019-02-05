@@ -11,7 +11,10 @@ The project was divided into five distinct phases, which we will use to describe
 * Iteration
 
 **Phase 1: Pipeline**
-![Phase 1 Image](https://github.com/heatherciallella/recommendation-engine/blob/master/RecommendProject%20Diagram.png)
+
+We started with the zip files imported into S3 buckets. We then used an AWS Crawler and Glue Job script to generate the table onto Athena. For the Event JSON zip file, we created a classifier to read the zip file and edited the Glue Job script so that all the dates were in ISO UTC datetime format and normalized the data so that event descriptions did not contain new lines and unknown UTF symbols
+
+<img src="https://github.com/heatherciallella/recommendation-engine/blob/master/img/RecommendProject%20Diagram.png" width="50%">
 
 **Phase 2: Display**
 
