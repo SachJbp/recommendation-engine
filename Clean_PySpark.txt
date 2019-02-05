@@ -1,0 +1,107 @@
+
+import sys
+from awsglue.transforms import *
+from awsglue.utils import getResolvedOptions
+from pyspark.context import SparkContext
+from awsglue.context import GlueContext
+from awsglue.job import Job
+from pyspark.sql.functions import udf
+from awsglue.dynamicframe import DynamicFrame
+from pyspark.sql import SparkSession
+from pyspark.sql.types import StringType
+
+
+## @params: [JOB_NAME]
+args = getResolvedOptions(sys.argv, ['JOB_NAME'])
+db_name = "recommendationproject"
+tbl_name = "events_json_gz"
+
+
+#User Created Function to Clean Event-Description
+def cleanEvent(eventString):
+    eventString = eventString.replace("\n", " ")
+    return ''.join([i if ord(i) < 128 else ' ' for i in eventString])
+
+def cleanDate(eventString):
+    print("----->", eventString)
+    splitValue = eventString.split(" ")
+    
+    if splitValue[1] == "Jan":
+        month = "01"
+    elif splitValue[1] == "Feb":
+        month = "02"
+    elif splitValue[1] == "Mar":
+        month = "03"
+    elif splitValue[1] =="Apr":
+        month = "04"
+    elif splitValue[1] == "May":
+        month = "05"
+    elif splitValue[1] == "Jun":
+        month = "06"
+    elif splitValue[1] == "Jul":
+        month = "07"
+    elif splitValue[1] == "Aug":
+        month = "08"
+    elif splitValue[1] == "Sep":
+        month = "09"
+    elif splitValue[1] == "Oct":
+        month = "10"
+    elif splitValue[1] == "Nov":
+        month = "11"
+    elif splitValue[1] == "Dec":
+        month = "12"
+    
+    return splitValue[2]+ "-" + month+ "-"+splitValue[0]+ "T" + splitValue[3] + "Z"
+
+
+sc = SparkContext()
+glueContext = GlueContext(sc)
+spark = glueContext.spark_session
+job = Job(glueContext)
+job.init(args['JOB_NAME'], args)
+## @type: DataSource
+## @args: [database = db_name, table_name = tbl_name, transformation_ctx = "datasource0"]
+## @return: datasource0
+## @inputs: []
+datasource0 = glueContext.create_dynamic_frame.from_catalog(database = db_name, table_name = tbl_name, transformation_ctx = "datasource0")
+## @type: ApplyMapping
+## @args: [mapping = [("event_description", "string", "event_description", "string"), ("event_end_utc", "string", "event_end_utc", "string"), ("event_id", "string", "event_id", "string"), ("event_name", "string", "event_name", "string"), ("event_start_utc", "string", "event_start_utc", "string"), ("facebook_event_id", "string", "facebook_event_id", "string"), ("hashtag", "string", "hashtag", "string"), ("organization_id", "string", "organization_id", "string"), ("organization_name", "string", "organization_name", "string"), ("tags", "array", "tags", "array"), ("venue_city", "string", "venue_city", "string"), ("venue_name", "string", "venue_name", "string"), ("venue_state", "string", "venue_state", "string"), ("venue_street", "string", "venue_street", "string"), ("venue_timezone", "string", "venue_timezone", "string"), ("venue_zip", "string", "venue_zip", "string")], transformation_ctx = "applymapping1"]
+## @return: applymapping1
+## @inputs: [frame = datasource0]
+
+event_DF = datasource0.toDF()
+cleanEvent_udf = udf(cleanEvent, StringType())
+cleanDateUDF = udf(cleanDate, StringType())
+event_DF = event_DF.withColumn('description_clean', cleanEvent_udf('event_description'))
+event_DF = event_DF.withColumn('event_end_utc_clean', cleanDateUDF('event_end_utc'))
+event_DF = event_DF.withColumn('event_start_utc_clean', cleanDateUDF('event_start_utc'))
+
+event_DF = event_DF.drop('event_description').withColumnRenamed('description_clean', 'event_description')
+event_DF = event_DF.drop('event_end_utc').withColumnRenamed('event_end_utc_clean', 'event_end_utc')
+event_DF = event_DF.drop('event_start_utc').withColumnRenamed('event_start_utc_clean', 'event_start_utc')
+
+event_temp = DynamicFrame.fromDF(event_DF, glueContext, "nested")
+
+
+applymapping1 = ApplyMapping.apply(frame = event_temp, mappings = [("event_description", "string", "event_description", "string"), ("event_end_utc", "string", "event_end_utc", "string"), ("event_id", "string", "event_id", "string"), ("event_name", "string", "event_name", "string"), ("event_start_utc", "string", "event_start_utc", "string"), ("facebook_event_id", "string", "facebook_event_id", "string"), ("hashtag", "string", "hashtag", "string"), ("organization_id", "string", "organization_id", "string"), ("organization_name", "string", "organization_name", "string"), ("tags", "array", "tags", "array"), ("venue_city", "string", "venue_city", "string"), ("venue_name", "string", "venue_name", "string"), ("venue_state", "string", "venue_state", "string"), ("venue_street", "string", "venue_street", "string"), ("venue_timezone", "string", "venue_timezone", "string"), ("venue_zip", "string", "venue_zip", "string")], transformation_ctx = "applymapping1")
+## @type: SelectFields
+## @args: [paths = ["event_description", "event_end_utc", "event_id", "event_name", "event_start_utc", "facebook_event_id", "hashtag", "organization_id", "organization_name", "tags", "venue_city", "venue_name", "venue_state", "venue_street", "venue_timezone", "venue_zip"], transformation_ctx = "selectfields2"]
+## @return: selectfields2
+## @inputs: [frame = applymapping1]
+selectfields2 = SelectFields.apply(frame = applymapping1, paths = ["event_description", "event_end_utc", "event_id", "event_name", "event_start_utc", "facebook_event_id", "hashtag", "organization_id", "organization_name", "tags", "venue_city", "venue_name", "venue_state", "venue_street", "venue_timezone", "venue_zip"], transformation_ctx = "selectfields2")
+## @type: ResolveChoice
+## @args: [choice = "MATCH_CATALOG", database = db_name, table_name = tbl_name, transformation_ctx = "resolvechoice3"]
+## @return: resolvechoice3
+## @inputs: [frame = selectfields2]
+resolvechoice3 = ResolveChoice.apply(frame = selectfields2, choice = "MATCH_CATALOG", database = db_name, table_name = tbl_name, transformation_ctx = "resolvechoice3")
+
+
+## @type: DataSink
+## @args: [connection_type = "s3", connection_options = {"path": "s3://schjson"}, format = "parquet", transformation_ctx = "datasink4"]
+## @return: datasink4
+## @inputs: [frame = dropnullfields3]
+datasink4 = glueContext.write_dynamic_frame.from_options(frame = resolvechoice3 , connection_type = "s3", connection_options = {"path": "s3://schjson"}, format = "parquet", transformation_ctx = "datasink4")
+
+datasink4.toDF().show()
+
+job.commit()
