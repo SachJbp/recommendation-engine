@@ -11,6 +11,7 @@ The project was divided into five distinct phases, which we will use to describe
 * Iteration
 
 **Phase 1: Pipeline**
+![Phase 1 Image](https://github.com/heatherciallella/recommendation-engine/blob/master/RecommendProject%20Diagram.png)
 
 **Phase 2: Display**
 
