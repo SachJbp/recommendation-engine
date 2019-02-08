@@ -1,0 +1,242 @@
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://s3.amazonaws.com/routechef.com/eventStyle.css">
+<script>
+
+function convertUTCDateToLocalDate(date) {
+    var newDate = new Date(date.getTime()+date.getTimezoneOffset()*60*1000);
+
+    var offset = date.getTimezoneOffset() / 60;
+    var hours = date.getHours();
+
+    newDate.setHours(hours - offset);
+
+    return newDate;   
+}
+
+
+function lk()
+{gf=document.getElementById("content");
+gf.style.visibility="visible";}
+
+</script>
+<h1 > EXPLORE EVENTS!</h1> <br><br><br>
+<div1 class="dropdown" align="center" >
+  <button style="width:600px;font-size:25px;" class="dropbtn" id="sortbutton" onmouseover="lk()" >SELECT EVENT
+
+
+</button>
+  <div1 style="background-color:#98FB98;"  class="dropdown-content" id="content">
+<a id="1" onclick="idList(this.id)">4ad20f7c-ed5e-11e6-8728-22000a8f2342</a>
+<a id="2" onclick="idList(this.id)">000e99b8-e83c-11e7-9b49-22000b88043c</a>
+<a id="3" onclick="idList(this.id)">80847cb8-874c-11e6-ad35-22000b0b83e3</a>
+<a id="4" onclick="idList(this.id)">0807e44e-d780-11e6-9374-22000a8aaf50</a>
+<a id="5" onclick="idList(this.id)">fb0a7480-2dd9-11e8-a8e1-22000b2d007a</a>
+<a id="6" onclick="idList(this.id)">fc29da10-47db-11e8-bb63-22000bb0c312</a>
+  </div1>
+</div1>
+<br><center><input type="submit" style="margin-bottom:50px;" id= "search" style="width:150px" value="SEARCH"></center><br>
+
+<script>
+
+function idList(id) 
+{sortbtn=document.getElementById("sortbutton");
+	 sortbtn.innerHTML=document.getElementById(id).innerHTML;
+         dropdown1=document.getElementById("content");
+        dropdown1.style.visibility="hidden";
+                             }
+
+var button = document.getElementById('search');
+button.addEventListener("click", function () 
+
+{  var event_selected=document.getElementById('sortbutton')
+	id1=event_selected.innerHTML
+  
+if(id1.length > 20)	
+	{var url="https://olubb2clgb.execute-api.us-east-1.amazonaws.com/prod/get?id="+id1;
+	//alert(url);
+  	var resultdiv= document.getElementById('dynamic-list');
+    	$(resultdiv).empty();
+    	loader=document.createElement('i');
+     	loader.id="loaderavail";
+     	loader.className="fa fa-refresh fa-spin";
+	loader.style.fontSize = "200px";
+    //loader.style.marginBottom="7%";
+    //loader.style.marginLeft="10%";
+    loader.style.color ="#9c1cd6";
+    loader.style.position="absolute";
+    loader.style.left="500px";
+    loader.style.visibility="visible";
+   loader.style.align="center";
+    resultdiv.appendChild(loader);
+
+		submit(url);}
+
+else {alert("Please select event ID!")}
+} );
+
+String.prototype.replaceAll = function(str1, str2, ignore) 
+{
+    return this.replace(new RegExp(str1.replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g,"\\$&"),(ignore?"gi":"g")),(typeof(str2)=="string")?str2.replace(/\$/g,"$$$$"):str2);
+}
+
+function additem(arr,i){
+
+var ul1 = document.getElementById("dynamic-list");
+if (i==0){
+$(ul1).empty();
+
+ }
+o=i.toString()
+//alert(typeof o)
+//alert(event_start_utc=arr['Item'])
+event_start_utc=arr['Item'][o]['event_start_utc'];
+venue_state=arr['Item'][o]['venue_state'];
+org_id=arr['Item'][o]['organization_id'];
+venue_street=arr['Item'][o]['venue_street'];
+description=arr['Item'][o]['event_description'];
+venue_city=arr['Item'][o]['venue_city'];
+venue_timezone=arr['Item'][o]['venue_timezone'];
+venue_zip=arr['Item'][o]['venue_zip'];
+org_name=arr['Item'][o]['organization_name'];
+event_id=arr['Item'][o]['event_id'];
+fb_event_id=arr['Item'][o]['facebook_event_id'];
+venue_name=arr['Item'][o]['venue_name'];
+tag=arr['Item'][o]['tags'];
+event_name=arr['Item'][o]['event_name'];
+event_end_utc=arr['Item'][o]['event_end_utc'];
+hashtag=arr['Item'][o]['hashtag'];
+dma=arr['Item'][o]['dma_code'];
+
+if (i==0)
+{ 
+var event_btn=document.getElementById('sortbutton')
+event_btn.innerText=event_name; 
+}
+
+if (i==1){
+
+
+    div2 = document.createElement('div');
+    div2.className = 'container'; 
+recdiv = document.createElement('div');
+    recdiv.style.fontSize = "xx-large"
+recdiv.style.fontWeight = "bold"
+recdiv.style.fontStyle = "italic"
+recdiv.style.color="white";
+    recdiv.innerText="You may also like...";
+recdiv.style.backgroundColor="#623875";
+div2.appendChild(recdiv);
+div2.style.marginBottom="50px";
+div.style.height="400px";
+div2.style.overflow = "hidden";
+ul1.appendChild(div2);
+
+}
+
+var ul = document.getElementById("dynamic-list");
+ul.style.textAlign="center";
+    div = document.createElement('div');
+    div.className = 'container'; 
+
+
+
+eventdiv = document.createElement('div');
+    eventdiv.className = 'top-left'; 
+    eventdiv.innerText=event_name;
+eventdiv.fontSize="xxx-large";
+
+//eventdiv.style.borderTop= "thick solid #bd6ce1";
+eventdiv.style.width= "100%";
+eventdiv.style.align="left";
+
+iddiv = document.createElement('div');
+    iddiv.className = 'top-middle2222'; 
+    iddiv.innerText="ID : "+event_id;
+
+dmadiv = document.createElement('div');
+    dmadiv.className = 'top-middle222'; 
+    dmadiv.innerText="DMA CODE :"+dma;
+
+venuediv = document.createElement('div');
+    venuediv.className = 'top-middle22'; 
+    venuediv.innerText=venue_street+','+venue_city+','+venue_state;
+
+descrdiv = document.createElement('div');
+    descrdiv.className = 'bottom-left'; 
+    descrdiv.innerText=description;
+    descrdiv.textAlign="justify";
+    //descrdiv.style.borderBottom= "thick solid #bd6ce1";
+
+datediv = document.createElement('div');
+    datediv.className = 'top-right'; 
+//2017-03-25T02:00:00Z-2017-03-26T19:30:00Z
+datediv.innerText=event_start_utc+" - "+ event_end_utc;
+//datediv.innerText=event_start_utc+"-"+event_end_utc;
+
+//var elem = document.createElement("img");
+   //elem.src = 'blank.png';
+    //elem.position='relative'
+    //elem.setAttribute("height", "auto");
+    //elem.setAttribute("width", "100%");
+
+//div.appendChild(elem);
+    div.appendChild(eventdiv);
+div.appendChild(dmadiv);
+div.appendChild(iddiv);
+div.appendChild(venuediv);
+div.appendChild(datediv);
+div.appendChild(descrdiv);
+div.style.height="400px";
+div.style.border="thin solid #623875";
+div.style.overflow = "hidden";
+div.style.marginBottom="50px";
+div.style.backgroundColor="#d3d3d3";
+div.style.overflow = "scroll";
+ul.appendChild(div);
+
+
+}
+
+
+function submit(url2){
+
+	xhr1 = new XMLHttpRequest();
+	
+	xhr1.onreadystatechange = function () {
+            if (xhr1.readyState === 4) {
+                var Arr = JSON.parse(xhr1.responseText);
+//alert(Arr[1]);
+		var str=xhr1.responseText;
+		if (str.length >500 ){
+		for (p=0;p<6;p++)
+			{additem(Arr,p);}
+		
+  		} else {alert("Sorry! Could not fetch results temporarily"); 
+	loader=document.getElementById("loaderavail");
+        loader.style.visibility="hidden";	} }  }
+
+	xhr1.open('get', url2, true);
+	
+        xhr1.setRequestHeader('Content-Type', 'application/json');
+        xhr1.setRequestHeader('User-Agent', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36');
+        xhr1.setRequestHeader('origin', 'google.com');
+        xhr1.send( null); 
+
+}
+
+	
+
+
+</script>
+
+<u4 id="dynamic-list" style ="width: 80%; left:10%;" font-color= #623875 font-weight="bold">
+
+   </u4>
+</head>
+
+</html>
