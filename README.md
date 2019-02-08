@@ -37,7 +37,7 @@ To find 5 recommeneded events in the same geographical location, we first groupe
 
 **Phase 5: Iteration**
 
-This is were we got to incorporate our knowledge from class into the project. Now that each event is split into smaller groups based on DMA code, we want to personalize each event recommendation. To find the best match, we used a combination of Term Frequency-Inverse Document Frequency, Jaccard Similarity/Distance, Single Value Decomposition, and K-Means Clustering. 
+This is were we got to incorporate our knowledge from class into the project. Now that each event is split into smaller groups based on DMA code, we want to personalize each event recommendation. To find the best match, we used a combination of Term Frequency-Inverse Document Frequency, Cosine Similarity/Distance, Single Value Decomposition, and K-Means Clustering. 
 <p align="center"><img src="https://github.com/heatherciallella/recommendation-engine/blob/master/img/phase4and5.png" width="75%"><p>
 
 
