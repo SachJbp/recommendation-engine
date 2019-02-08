@@ -1,4 +1,4 @@
-SELECT events_json_gz.*, dma_zip_csv_gz."dma code"
+SELECT events_json_gz.*, dma_zip_csv_gz."dma code", dma_zip_csv_gz."dma name"
 FROM events_json_gz
 INNER JOIN dma_zip_csv_gz
 ON events_json_gz.venue_zip = CAST(dma_zip_csv_gz.zipcode AS VARCHAR(15))
